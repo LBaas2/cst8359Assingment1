@@ -1,0 +1,39 @@
+﻿@model Assignment1.Models.Event
+@{
+    ViewData["Title"] = "Manage Attendees - " + @Model.title;
+    Layout = "_Layout";
+}
+
+@if(TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["SuccessMessage"]
+    </div>
+}
+<div class="text-center" >
+    <h3>Manage Attendees - @Model.title</h3>
+    <div class = "card-signup">
+        <h5>Sign Up for @Model.title</h5>
+        <form method="post" asp-controller="Home" asp-action="ManageAttendee">
+            <input type="hidden" name="eventId" value="@Model.id" />
+            <p>Name</p>
+            <input type ="text" id="name" name="name"/>
+            <p>Email</p>
+            <input type="email" id="email" name="email"/><br />
+            <input type ="submit" value="Sign Up"/>
+            <button><a asp-area="" asp-controller="Home" asp-action="EventManager">Go Back</a></button>
+        </form>
+    </div>
+    <div>
+        <h3>Current Attendees - (@Model.attendees.Count)</h3>
+        <div class="card">
+            @foreach(var attendee in Model.attendees)
+            {
+                <p>@attendee.name (@attendee.email)</p>
+            }
+        </div>
+    </div>
+</div>
+
+
+    
