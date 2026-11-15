@@ -1,0 +1,55 @@
+﻿@model Assignment1.Models.Event
+
+@{
+    ViewData["Title"] = $"Manage Attendees - {Model.title}";
+    Layout = "_Layout";
+}
+
+<div class="container mt-4">
+    <!-- Page Heading -->
+    <h1 class="display-5 fw-normal mb-3">Manage Attendees - @Model.title</h1>
+
+    <!-- Action Buttons -->
+    <div class="mb-4">
+        <a asp-controller="Event" asp-action="CreateAttendee" asp-route-id="@Model.id" class="btn btn-primary me-3">
+            Add Attendee
+        </a>
+        <a asp-controller="Event" asp-action="EventManager" class="align-middle">
+            Back to Event
+        </a>
+    </div>
+
+    <!-- Attendees Table -->
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th class="text-end"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.attendees != null && Model.attendees.Any())
+            {
+                @foreach (var attendee in Model.attendees)
+                {
+                    <tr>
+                        <td>@attendee.name</td>
+                        <td>@attendee.email</td>
+                        <td class="text-end">
+                            <a asp-controller="Event" asp-action="EditAttendee" asp-route-id="@Model.id" asp-route-attendeeID ="@attendee.id">Edit</a> |
+                            <a asp-controller="Event" asp-action="DeleteAttendee" asp-route-id="@Model.id" asp-route-attendeeID ="@attendee.id">Delete</a>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="3" class="text-muted">No attendees registered yet.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+

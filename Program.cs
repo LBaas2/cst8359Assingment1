@@ -1,3 +1,6 @@
+using Azure.Storage.Blobs;
+using Assignment1.Data;
+using Microsoft.EntityFrameworkCore;
 namespace Assignment1
 {
     public class Program
@@ -8,8 +11,30 @@ namespace Assignment1
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+            var blobConnection = builder.Configuration.GetConnectionString("AzureBlobStorage");
+            builder.Services.AddSingleton(new BlobServiceClient(blobConnection));
+
+            //connect to the database
+            var connection = builder.Configuration.GetConnectionString("DefaultConnection");
+            builder.Services.AddDbContext<EventDBContext>(options => options.UseSqlServer(connection));
+
 
             var app = builder.Build();
+
+            using (var scope = app.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+                try
+                {
+                    var context = services.GetRequiredService<EventDBContext>();
+                    DbInitializer.Initialize(context);
+                }
+                catch (Exception ex)
+                {
+                    var logger = services.GetRequiredService<ILogger<Program>>();
+                    logger.LogError(ex, "An error occurred while seeding the database.");
+                }
+            }
 
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
